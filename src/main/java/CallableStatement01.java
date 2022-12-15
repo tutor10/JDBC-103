@@ -38,7 +38,7 @@ public class CallableStatement01 {
         //2. Adım: Function'ı çalıştır.
         st.execute(sql1);
 
-        //3. Adım: Fonction'ı çağır.
+        //3. Adım: Function'ı çağır.
         CallableStatement cst1 = con.prepareCall("{? = call toplamaF(?, ?)}");//İlk parametre retun type
 
         //4. Adım: Return için registerOurParameter() methodunu, parametreler için ise set() ... methodlarını uygula.
@@ -86,10 +86,26 @@ public class CallableStatement01 {
         System.out.printf("%.2f",cst2.getBigDecimal(1));
 
 
+        System.out.println();
+        String sql6="CREATE OR  REPLACE FUNCTION  concatF(a varchar(10),b varchar(10))\n" +
+                "                 RETURNS varchar\n" +
+                "                 LANGUAGE plpgsql\n" +
+                "                 AS\n" +
+                "                 $$\n" +
+                "                 BEGIN \n" +
+                "                 \n" +
+                "                 RETURN concat(a,b); \n" +
+                "                \n" +
+                "                 END\n" +
+                "                 $$;";
 
-
-
-
+        st.execute(sql6);
+        CallableStatement cst5 = con.prepareCall("{? = call concatF(?,?)}");
+        cst5.registerOutParameter(1,Types.VARCHAR);
+        cst5.setObject(2,"ALi");
+        cst5.setObject(3,"Can");
+        cst5.execute();
+        System.out.println("cst5 = " + cst5.getString(1));
 
 
     }
